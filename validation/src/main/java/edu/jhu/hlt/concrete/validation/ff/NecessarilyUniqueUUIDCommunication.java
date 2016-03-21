@@ -36,7 +36,6 @@ import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
  * <li>all mentionIDs of Entity objects are actually present in the
  * EntityMentionSets of the communication</li>
  * </ul>
- * <br><br>
  * An {@link InvalidConcreteStructException} is thrown if as soon as a check fails.
  */
 public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Communication>

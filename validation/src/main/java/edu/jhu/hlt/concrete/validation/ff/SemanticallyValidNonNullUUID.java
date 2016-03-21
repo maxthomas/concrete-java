@@ -2,6 +2,9 @@ package edu.jhu.hlt.concrete.validation.ff;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A wrapper object around {@link UUID}s that performs semantic validation. Should
  * the validation fail, an {@link InvalidConcreteStructException} will be thrown
@@ -13,6 +16,9 @@ import java.util.UUID;
  * </ul>
  */
 public class SemanticallyValidNonNullUUID implements ValidUUID {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SemanticallyValidNonNullUUID.class);
+
   private final UUID uuid;
 
   /**
@@ -23,17 +29,18 @@ public class SemanticallyValidNonNullUUID implements ValidUUID {
     if (uuid == null)
       throw new InvalidConcreteStructException("UUID is null.");
     String us = uuid.getUuidString();
+    LOGGER.debug("Preparing to evaluate UUID: {}", us);
     if (us != null
         && us.length() == 36
         && us.contains("-")) {
-      throw new InvalidConcreteStructException("UUID is not valid.");
-    } else {
       try {
         this.uuid = java.util.UUID.fromString(us);
       } catch (IllegalArgumentException iae) {
         throw new InvalidConcreteStructException(iae);
       }
-    }
+    } else
+      throw new InvalidConcreteStructException("UUID is not valid.");
+
   }
 
   @Override
