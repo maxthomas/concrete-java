@@ -99,8 +99,6 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         .map(ValidUUID::toString)
         .forEach(LOGGER::debug);
     LOGGER.debug("EMS ID set contains {} items.", vemsUUIDSet.size());
-    ValidUUID f = vemsUUIDSet.stream().findFirst().get();
-    LOGGER.debug("Got first hc: {}", f.hashCode());
 
     final int nES = c.getEntitySetListSize();
     LOGGER.debug("Contains {} EntitySets.", nES);
@@ -112,8 +110,6 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         if (ves.getMentionSetUUID().isPresent()) {
           ValidUUID ptr = ves.getMentionSetUUID().get();
           LOGGER.debug("Checking pointer: {}", ptr.toString());
-          LOGGER.debug("hc: {}", ptr.hashCode());
-          LOGGER.debug("from set eq new?: {}", f.equals(ptr));
           if (!vemsUUIDSet.contains(ptr))
             throw new InvalidConcreteStructException("At least one EntitySet "
                 + "EntityMentionSet UUID pointer is not present in this communication.");
