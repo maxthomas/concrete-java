@@ -2,9 +2,6 @@ package edu.jhu.hlt.concrete.validation.ff;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A wrapper object around {@link UUID}s that performs semantic validation. Should
  * the validation fail, an {@link InvalidConcreteStructException} will be thrown
@@ -17,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SemanticallyValidNonNullUUID implements ValidUUID {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SemanticallyValidNonNullUUID.class);
-
   private final UUID uuid;
 
   /**
@@ -29,7 +24,6 @@ public class SemanticallyValidNonNullUUID implements ValidUUID {
     if (uuid == null)
       throw new InvalidConcreteStructException("UUID is null.");
     String us = uuid.getUuidString();
-    LOGGER.debug("Preparing to evaluate UUID: {}", us);
     if (us != null
         && us.length() == 36
         && us.contains("-")) {
@@ -39,18 +33,15 @@ public class SemanticallyValidNonNullUUID implements ValidUUID {
         throw new InvalidConcreteStructException(iae);
       }
     } else
-      throw new InvalidConcreteStructException("UUID is not valid.");
-
+      throw new InvalidConcreteStructException("UUID is not valid: " + us);
   }
 
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return this.uuid.hashCode();
-  }
-
-  @Override
-  public final boolean equals(Object obj) {
-    return this.uuid.equals(obj);
   }
 
   @Override
@@ -61,5 +52,33 @@ public class SemanticallyValidNonNullUUID implements ValidUUID {
   @Override
   public final edu.jhu.hlt.concrete.UUID toConcrete() {
     return new edu.jhu.hlt.concrete.UUID(this.uuid.toString());
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return this.uuid.toString();
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SemanticallyValidNonNullUUID other = (SemanticallyValidNonNullUUID) obj;
+    if (uuid == null) {
+      if (other.uuid != null)
+        return false;
+    } else if (!uuid.equals(other.uuid))
+      return false;
+    return true;
   }
 }

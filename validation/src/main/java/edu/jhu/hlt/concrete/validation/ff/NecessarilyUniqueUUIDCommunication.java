@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.EntitySet;
@@ -41,6 +44,8 @@ import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
 public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Communication>
     implements ValidCommunication {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(NecessarilyUniqueUUIDCommunication.class);
+
   protected final Set<ValidUUID> necessarilyUniqueUUIDs = new HashSet<>();
   protected final Set<ValidUUID> entityMentionUUIDSet;
 
@@ -55,17 +60,19 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
    */
   NecessarilyUniqueUUIDCommunication(final Communication c) throws InvalidConcreteStructException {
     super(c);
+    LOGGER.debug("Validating communication: {} [{}]", c.getId(), c.getUuid().getUuidString());
     this.uuid = UUIDs.validate(c.getUuid());
     this.addNecessarilyUniqueUUID(this.uuid);
     final int nSects = c.getSectionListSize();
+    LOGGER.debug("Contains {} sections.", nSects);
     this.sl = new ArrayList<>(nSects);
     if (nSects > 0)
       for (Section s : c.getSectionList())
         this.sl.add(Sections.validate(s));
 
-
     final int nEMS = c.getEntityMentionSetListSize();
     this.emsl = new ArrayList<>(nEMS);
+    LOGGER.debug("Contains {} EntityMentionSets.", nEMS);
     if (nEMS > 0) {
       for (EntityMentionSet ems : c.getEntityMentionSetList()) {
         ValidEntityMentionSet vems = EntityMentionSets.validate(ems);
@@ -79,15 +86,24 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         .map(ValidEntityMention::getUUID)
         .collect(Collectors.toSet());
 
+
     } else
       this.entityMentionUUIDSet = new HashSet<>(0);
 
     // Validate EntitySet ptrs against these
+    LOGGER.debug("EntityMentionSet UUIDs (stream):");
     Set<ValidUUID> vemsUUIDSet = this.emsl.stream()
         .map(ValidEntityMentionSet::getUUID)
         .collect(Collectors.toSet());
+    vemsUUIDSet.stream()
+        .map(ValidUUID::toString)
+        .forEach(LOGGER::debug);
+    LOGGER.debug("EMS ID set contains {} items.", vemsUUIDSet.size());
+    ValidUUID f = vemsUUIDSet.stream().findFirst().get();
+    LOGGER.debug("Got first hc: {}", f.hashCode());
 
     final int nES = c.getEntitySetListSize();
+    LOGGER.debug("Contains {} EntitySets.", nES);
     this.esl = new ArrayList<>(nES);
     if (nES > 0) {
       for (EntitySet es : c.getEntitySetList()) {
@@ -95,6 +111,9 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         this.esl.add(ves);
         if (ves.getMentionSetUUID().isPresent()) {
           ValidUUID ptr = ves.getMentionSetUUID().get();
+          LOGGER.debug("Checking pointer: {}", ptr.toString());
+          LOGGER.debug("hc: {}", ptr.hashCode());
+          LOGGER.debug("from set eq new?: {}", f.equals(ptr));
           if (!vemsUUIDSet.contains(ptr))
             throw new InvalidConcreteStructException("At least one EntitySet "
                 + "EntityMentionSet UUID pointer is not present in this communication.");
