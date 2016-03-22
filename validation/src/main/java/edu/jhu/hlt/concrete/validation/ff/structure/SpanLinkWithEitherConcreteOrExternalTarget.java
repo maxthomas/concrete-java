@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.jhu.hlt.concrete.SpanLink;
-import edu.jhu.hlt.concrete.TextSpan;
-import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.TokenRefSequence;
+import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.UUIDs;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
@@ -27,13 +26,13 @@ public class SpanLinkWithEitherConcreteOrExternalTarget implements ValidSpanLink
   }
 
   @Override
-  public List<Token> getTokens() {
+  public List<Integer> getTokens() {
     // TODO Auto-generated method stub
     return new ArrayList<>();
   }
 
   @Override
-  public Optional<Token> getAnchorToken() {
+  public Optional<Integer> getAnchorToken() {
     // TODO Auto-generated method stub
     return Optional.empty();
   }
@@ -45,7 +44,7 @@ public class SpanLinkWithEitherConcreteOrExternalTarget implements ValidSpanLink
   }
 
   @Override
-  public Optional<TextSpan> getTextSpan() {
+  public Optional<FlattenedTextSpan> getTextSpan() {
     // TODO Auto-generated method stub
     return Optional.empty();
   }

@@ -17,7 +17,13 @@ public class Metadata {
 
   }
 
-  public static final FlattenedMetadata validate(AnnotationMetadata md) throws InvalidConcreteStructException {
+  public static final FlattenedMetadata validate(AnnotationMetadata md)
+      throws InvalidConcreteStructException {
     return new FlatMetadataImpl(md);
+  }
+
+  public static final FlattenedMetadata construct(final String tool, final long ts, final int kb)
+      throws InvalidConcreteStructException {
+    return new FlatMetadataImpl(tool, ts, kb);
   }
 }

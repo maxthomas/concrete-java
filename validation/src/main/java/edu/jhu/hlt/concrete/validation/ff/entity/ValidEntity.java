@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import edu.jhu.hlt.concrete.Entity;
+import edu.jhu.hlt.concrete.miscommunication.ConfidenceScorable;
 import edu.jhu.hlt.concrete.validation.ff.UUIDable;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
@@ -15,12 +16,10 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
  * not defined, but the operations of the Set collection are more useful
  * (for example, finding shared mentions across multiple Entities).
  */
-public interface ValidEntity extends UUIDable {
+public interface ValidEntity extends UUIDable, ConfidenceScorable {
   public Set<ValidUUID> getMentionIDSet();
 
   public Optional<String> getType();
 
   public Optional<String> getCanonicalName();
-
-  public Optional<Double> getConfidence();
 }

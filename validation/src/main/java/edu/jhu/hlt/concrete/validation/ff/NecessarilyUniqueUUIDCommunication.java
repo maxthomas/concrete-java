@@ -50,10 +50,10 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
   protected final Set<ValidUUID> entityMentionUUIDSet;
 
   private final ValidUUID uuid;
+
   private final List<ValidSection> sl;
   private final List<ValidEntityMentionSet> emsl;
   private final List<ValidEntitySet> esl;
-
   /**
    * @param c the {@link Communication} to wrap
    * @throws InvalidConcreteStructException on validation failure
@@ -85,7 +85,6 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         .flatMap(vems -> vems.getEntityList().stream())
         .map(ValidEntityMention::getUUID)
         .collect(Collectors.toSet());
-
 
     } else
       this.entityMentionUUIDSet = new HashSet<>(0);
@@ -137,5 +136,10 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
   @Override
   public List<ValidEntitySet> getEntitySetList() {
     return new ArrayList<>(this.esl);
+  }
+
+  @Override
+  public List<ValidEntityMentionSet> getEntityMentionSetList() {
+    return new ArrayList<>(this.emsl);
   }
 }
