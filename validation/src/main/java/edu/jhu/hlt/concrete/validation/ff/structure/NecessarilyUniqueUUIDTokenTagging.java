@@ -8,7 +8,6 @@ public class NecessarilyUniqueUUIDTokenTagging extends AbstractConcreteStructWit
     implements ValidTokenTagging {
 
   NecessarilyUniqueUUIDTokenTagging(TokenTagging tkz) throws InvalidConcreteStructException {
-    super(tkz);
-    this.addNecessarilyUniqueUUID(tkz.getUuid());
+    super(tkz, tkz.getUuid());
   }
 }

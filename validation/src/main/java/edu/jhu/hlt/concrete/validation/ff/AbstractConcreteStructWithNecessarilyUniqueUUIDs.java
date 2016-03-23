@@ -10,25 +10,30 @@ import java.util.Set;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TFieldIdEnum;
 
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.serialization.Concretable;
 
 public abstract class AbstractConcreteStructWithNecessarilyUniqueUUIDs<T extends TBase<T, ? extends TFieldIdEnum>>
-    implements Concretable<T> {
+    implements Concretable<T>, UUIDable {
 
+  protected final ValidUUID uuid;
   protected final Set<ValidUUID> necessarilyUniqueUUIDs;
   protected final T obj;
 
-  protected AbstractConcreteStructWithNecessarilyUniqueUUIDs(T t) throws InvalidConcreteStructException {
+  protected AbstractConcreteStructWithNecessarilyUniqueUUIDs(T t, UUID uuid) throws InvalidConcreteStructException {
     this.obj = t;
+    this.uuid = UUIDs.validate(uuid);
+
     this.necessarilyUniqueUUIDs = new HashSet<>();
+    this.addNecessarilyUniqueUUID(uuid);
   }
 
-  protected final void addNecessarilyUniqueUUID(edu.jhu.hlt.concrete.UUID concUuid) throws InvalidConcreteStructException {
+  private final void addNecessarilyUniqueUUID(edu.jhu.hlt.concrete.UUID concUuid) throws InvalidConcreteStructException {
     ValidUUID vu = UUIDs.validate(concUuid);
     this.addNecessarilyUniqueUUID(vu);
   }
 
-  protected final void addNecessarilyUniqueUUID(ValidUUID uuid) throws InvalidConcreteStructException {
+  private final void addNecessarilyUniqueUUID(ValidUUID uuid) throws InvalidConcreteStructException {
     if (!this.necessarilyUniqueUUIDs.add(uuid))
       throw new InvalidConcreteStructException("Communication contains at least one duplicate UUID: " + uuid.toString());
   }
@@ -36,5 +41,10 @@ public abstract class AbstractConcreteStructWithNecessarilyUniqueUUIDs<T extends
   @Override
   public final T toThrift() {
     return this.obj;
+  }
+
+  @Override
+  public final ValidUUID getUUID() {
+    return this.uuid;
   }
 }

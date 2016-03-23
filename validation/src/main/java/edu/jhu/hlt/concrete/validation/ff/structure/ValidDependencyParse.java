@@ -1,5 +1,7 @@
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
-public interface ValidDependencyParse {
+import edu.jhu.hlt.concrete.validation.ff.UUIDable;
+
+public interface ValidDependencyParse extends UUIDable {
 
 }

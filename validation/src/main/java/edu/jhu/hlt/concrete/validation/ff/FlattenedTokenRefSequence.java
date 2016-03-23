@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FlattenedTokenRefSequence extends TextSpannable {
-  public List<Integer> getTokens();
+  public List<Integer> getTokenIndices();
 
-  public Optional<Integer> getAnchorToken();
+  public Optional<Integer> getAnchorTokenIndex();
 
   public ValidUUID getTokenizationUUID();
 }

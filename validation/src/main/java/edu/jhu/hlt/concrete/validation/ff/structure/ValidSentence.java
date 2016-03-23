@@ -1,5 +1,9 @@
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
-public interface ValidSentence {
+import java.util.Optional;
 
+import edu.jhu.hlt.concrete.validation.ff.UUIDable;
+
+public interface ValidSentence extends UUIDable {
+  public Optional<ValidTokenization> getTokenization();
 }

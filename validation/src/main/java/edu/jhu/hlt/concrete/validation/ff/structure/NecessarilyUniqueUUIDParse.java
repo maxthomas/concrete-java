@@ -8,7 +8,6 @@ public class NecessarilyUniqueUUIDParse extends AbstractConcreteStructWithNecess
     implements ValidParse {
 
   public NecessarilyUniqueUUIDParse(Parse p) throws InvalidConcreteStructException {
-    super(p);
-    this.addNecessarilyUniqueUUID(p.getUuid());
+    super(p, p.getUuid());
   }
 }

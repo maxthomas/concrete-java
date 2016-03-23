@@ -24,7 +24,6 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Entity>
     implements ValidEntity {
 
-  private final ValidUUID uuid;
   private final Set<ValidUUID> menIDs;
   private final Optional<String> type;
   private final Optional<String> canonicalName;
@@ -34,9 +33,7 @@ public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueU
    * @throws InvalidConcreteStructException on invalid {@link Entity} (duplicate UUIDs)
    */
   FailFastEntity(final Entity e) throws InvalidConcreteStructException {
-    super(e);
-    this.uuid = UUIDs.validate(e.getUuid());
-    this.addNecessarilyUniqueUUID(this.uuid);
+    super(e, e.getUuid());
     final int mls = e.getMentionIdListSize();
     this.menIDs = new HashSet<>(mls);
 
@@ -75,10 +72,5 @@ public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueU
   @Override
   public Optional<Double> getConfidence() {
     return this.conf;
-  }
-
-  @Override
-  public ValidUUID getUUID() {
-    return this.uuid;
   }
 }

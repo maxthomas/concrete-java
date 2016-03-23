@@ -5,10 +5,9 @@ import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyU
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 
 public class NecessarilyUniqueUUIDDepParse extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<DependencyParse>
-    implements ValidDependencyParse{
+    implements ValidDependencyParse {
 
   public NecessarilyUniqueUUIDDepParse(DependencyParse dp) throws InvalidConcreteStructException {
-    super(dp);
-    this.addNecessarilyUniqueUUID(dp.getUuid());
+    super(dp, dp.getUuid());
   }
 }

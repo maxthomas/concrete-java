@@ -15,7 +15,6 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<EntitySet>
     implements ValidEntitySet {
 
-  private final ValidUUID uuid;
   private final String tool;
   private final int kb;
   private final long ts;
@@ -24,9 +23,7 @@ public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNe
   private final Optional<ValidUUID> mentionSetUUID;
 
   NecessarilyUniqueUUIDEntitySet(EntitySet es) throws InvalidConcreteStructException {
-    super(es);
-    this.uuid = UUIDs.validate(es.getUuid());
-    this.addNecessarilyUniqueUUID(this.uuid);
+    super(es, es.getUuid());
     AnnotationMetadata md = es.getMetadata();
     this.tool = md.getTool();
     this.kb = md.getKBest();
@@ -42,11 +39,6 @@ public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNe
       this.mentionSetUUID = Optional.of(UUIDs.validate(es.getMentionSetId()));
     else
       this.mentionSetUUID = Optional.empty();
-  }
-
-  @Override
-  public ValidUUID getUUID() {
-    return this.uuid;
   }
 
   @Override

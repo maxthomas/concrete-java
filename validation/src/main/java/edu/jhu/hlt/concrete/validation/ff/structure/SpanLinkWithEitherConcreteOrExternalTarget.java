@@ -26,13 +26,13 @@ public class SpanLinkWithEitherConcreteOrExternalTarget implements ValidSpanLink
   }
 
   @Override
-  public List<Integer> getTokens() {
+  public List<Integer> getTokenIndices() {
     // TODO Auto-generated method stub
     return new ArrayList<>();
   }
 
   @Override
-  public Optional<Integer> getAnchorToken() {
+  public Optional<Integer> getAnchorTokenIndex() {
     // TODO Auto-generated method stub
     return Optional.empty();
   }

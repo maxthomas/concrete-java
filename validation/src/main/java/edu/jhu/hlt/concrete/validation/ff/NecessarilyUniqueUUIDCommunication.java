@@ -3,15 +3,21 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMentionSet;
@@ -23,8 +29,12 @@ import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntity;
 import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntityMention;
 import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntityMentionSet;
 import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntitySet;
+import edu.jhu.hlt.concrete.validation.ff.situation.ValidSituationMentionSet;
+import edu.jhu.hlt.concrete.validation.ff.situation.ValidSituationSet;
 import edu.jhu.hlt.concrete.validation.ff.structure.Sections;
 import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
+import edu.jhu.hlt.concrete.validation.ff.structure.ValidSentence;
+import edu.jhu.hlt.concrete.validation.ff.structure.ValidTokenization;
 
 /**
  * Implementation of {@link ValidCommunication} that provides validation and utility
@@ -42,70 +52,85 @@ import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
  * An {@link InvalidConcreteStructException} is thrown if as soon as a check fails.
  */
 public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Communication>
-    implements ValidCommunication {
+    implements PowerCommunication {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NecessarilyUniqueUUIDCommunication.class);
 
-  protected final Set<ValidUUID> necessarilyUniqueUUIDs = new HashSet<>();
-  protected final Set<ValidUUID> entityMentionUUIDSet;
+  protected final ImmutableSet<ValidUUID> entityMentionUUIDSet;
 
-  private final ValidUUID uuid;
+  private final ImmutableMap<ValidUUID, ValidSection> idToSectMap;
+  private final ImmutableMap<ValidUUID, ValidSentence> idToSentMap;
+  private final ImmutableMap<ValidUUID, ValidTokenization> idToTkzMap;
+  private final ImmutableMap<ValidUUID, ValidEntityMentionSet> idToEMSMap;
+  private final ImmutableMap<ValidUUID, ValidEntitySet> idToESMap;
+  private final ImmutableMap<ValidUUID, ValidSituationMentionSet> idToSitMensMap;
+  private final ImmutableMap<ValidUUID, ValidSituationSet> idToSitsMap;
 
-  private final List<ValidSection> sl;
-  private final List<ValidEntityMentionSet> emsl;
-  private final List<ValidEntitySet> esl;
+  //////////////////////////////////////////////////////
+  // The following are lazily computed upon invocation
+  // of the methods that use them
+  //////////////////////////////////////////////////////
+  private ImmutableList<ValidSection> sList = null;
+  private ImmutableList<ValidEntityMentionSet> emsL = null;
+  private ImmutableList<ValidEntitySet> esL = null;
+
   /**
    * @param c the {@link Communication} to wrap
    * @throws InvalidConcreteStructException on validation failure
    */
   NecessarilyUniqueUUIDCommunication(final Communication c) throws InvalidConcreteStructException {
-    super(c);
-    LOGGER.debug("Validating communication: {} [{}]", c.getId(), c.getUuid().getUuidString());
-    this.uuid = UUIDs.validate(c.getUuid());
-    this.addNecessarilyUniqueUUID(this.uuid);
+    super(c, c.getUuid());
+    LOGGER.debug("Validating communication: {} [{}]", c.getId(), this.getUUID().toString());
     final int nSects = c.getSectionListSize();
     LOGGER.debug("Contains {} sections.", nSects);
-    this.sl = new ArrayList<>(nSects);
+    Map<ValidUUID, ValidSection> uuidToSectMap = new LinkedHashMap<>(nSects);
     if (nSects > 0)
-      for (Section s : c.getSectionList())
-        this.sl.add(Sections.validate(s));
+      for (Section s : c.getSectionList()) {
+        ValidSection vs = Sections.validate(s);
+        uuidToSectMap.put(vs.getUUID(), vs);
+      }
+
+    this.idToSectMap = ImmutableMap.copyOf(uuidToSectMap);
 
     final int nEMS = c.getEntityMentionSetListSize();
-    this.emsl = new ArrayList<>(nEMS);
+    Map<ValidUUID, ValidEntityMentionSet> uuidToEMSMap = new LinkedHashMap<>(nEMS);
     LOGGER.debug("Contains {} EntityMentionSets.", nEMS);
+    Builder<ValidUUID> b = ImmutableSet.builder();
     if (nEMS > 0) {
       for (EntityMentionSet ems : c.getEntityMentionSetList()) {
         ValidEntityMentionSet vems = EntityMentionSets.validate(ems);
-        this.emsl.add(vems);
+        uuidToEMSMap.put(vems.getUUID(), vems);
       }
 
       // Validation step: cache list of EntityMention UUIDs
       // to validate Entity pointers later on
-      this.entityMentionUUIDSet = this.emsl.stream()
-        .flatMap(vems -> vems.getEntityList().stream())
-        .map(ValidEntityMention::getUUID)
-        .collect(Collectors.toSet());
+      uuidToEMSMap.values()
+          .stream()
+          .flatMap(vems -> vems.getEntityList().stream())
+          .map(ValidEntityMention::getUUID)
+          .forEach(b::add);
+    }
 
-    } else
-      this.entityMentionUUIDSet = new HashSet<>(0);
+    this.idToEMSMap = ImmutableMap.copyOf(uuidToEMSMap);
+    this.entityMentionUUIDSet = b.build();
 
     // Validate EntitySet ptrs against these
     LOGGER.debug("EntityMentionSet UUIDs (stream):");
-    Set<ValidUUID> vemsUUIDSet = this.emsl.stream()
+    Builder<ValidUUID> emsUUIDBuilder = ImmutableSet.builder();
+    this.idToEMSMap.values()
+        .stream()
         .map(ValidEntityMentionSet::getUUID)
-        .collect(Collectors.toSet());
-    vemsUUIDSet.stream()
-        .map(ValidUUID::toString)
-        .forEach(LOGGER::debug);
+        .forEach(emsUUIDBuilder::add);
+    ImmutableSet<ValidUUID> vemsUUIDSet = emsUUIDBuilder.build();
     LOGGER.debug("EMS ID set contains {} items.", vemsUUIDSet.size());
 
     final int nES = c.getEntitySetListSize();
     LOGGER.debug("Contains {} EntitySets.", nES);
-    this.esl = new ArrayList<>(nES);
+    Map<ValidUUID, ValidEntitySet> uuidToESMap = new LinkedHashMap<>(nES);
     if (nES > 0) {
       for (EntitySet es : c.getEntitySetList()) {
         ValidEntitySet ves = EntitySets.validate(es);
-        this.esl.add(ves);
+        uuidToESMap.put(ves.getUUID(), ves);
         if (ves.getMentionSetUUID().isPresent()) {
           ValidUUID ptr = ves.getMentionSetUUID().get();
           LOGGER.debug("Checking pointer: {}", ptr.toString());
@@ -126,20 +151,74 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
                 + "does not point to a mention in this Communication.");
       }
     }
-  }
 
-  @Override
-  public ValidUUID getUUID() {
-    return this.uuid;
+    this.idToESMap = ImmutableMap.copyOf(uuidToESMap);
+    this.esL = ImmutableList.copyOf(uuidToESMap.values());
+
+    // TODO
+    this.idToSentMap = ImmutableMap.of();
+    this.idToTkzMap = ImmutableMap.of();
+    this.idToSitMensMap = ImmutableMap.of();
+    this.idToSitsMap = ImmutableMap.of();
   }
 
   @Override
   public List<ValidEntitySet> getEntitySetList() {
-    return new ArrayList<>(this.esl);
+    if (this.esL == null)
+      this.esL = ImmutableList.copyOf(this.idToESMap.values());
+    return this.esL;
   }
 
   @Override
   public List<ValidEntityMentionSet> getEntityMentionSetList() {
-    return new ArrayList<>(this.emsl);
+    if (this.emsL == null)
+      this.emsL = ImmutableList.copyOf(this.emsL);
+    return this.emsL;
+  }
+
+  @Override
+  public List<ValidSection> getSectionList() {
+    if (this.sList == null)
+      this.sList = ImmutableList.copyOf(this.idToSectMap.values());
+    return this.sList;
+  }
+
+  @Override
+  public Optional<ValidEntitySet> getEntitySet(ValidUUID uuid) {
+    return Optional.ofNullable(this.idToESMap.get(uuid));
+  }
+
+  @Override
+  public Optional<ValidEntityMentionSet> getEntityMentionSet(ValidUUID uuid) {
+    return Optional.ofNullable(this.idToEMSMap.get(uuid));
+  }
+
+  @Override
+  public Optional<ValidSection> getSection(ValidUUID uuid) {
+    return Optional.ofNullable(this.idToSectMap.get(uuid));
+  }
+
+  @Override
+  public List<ValidSituationSet> getSituationSetList() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<ValidSituationMentionSet> getSituationMentionSetList() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<ValidSentence> getSentenceList() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<ValidTokenization> getTokenizationList() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

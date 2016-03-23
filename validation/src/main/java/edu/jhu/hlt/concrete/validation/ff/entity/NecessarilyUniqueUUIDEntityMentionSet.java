@@ -9,13 +9,10 @@ import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyU
 import edu.jhu.hlt.concrete.validation.ff.FlattenedMetadata;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.Metadata;
-import edu.jhu.hlt.concrete.validation.ff.UUIDs;
-import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
 public class NecessarilyUniqueUUIDEntityMentionSet extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<EntityMentionSet>
     implements ValidEntityMentionSet {
 
-  private final ValidUUID uuid;
   private final String tool;
   private final int kb;
   private final long ts;
@@ -23,9 +20,7 @@ public class NecessarilyUniqueUUIDEntityMentionSet extends AbstractConcreteStruc
   private final List<ValidEntityMention> ml;
 
   NecessarilyUniqueUUIDEntityMentionSet(EntityMentionSet ems) throws InvalidConcreteStructException {
-    super(ems);
-    this.uuid = UUIDs.validate(ems.getUuid());
-    this.addNecessarilyUniqueUUID(this.uuid);
+    super(ems, ems.getUuid());
 
     FlattenedMetadata fmd = Metadata.validate(ems.getMetadata());
     this.tool = fmd.getTool();
@@ -37,11 +32,6 @@ public class NecessarilyUniqueUUIDEntityMentionSet extends AbstractConcreteStruc
     if (mls > 0)
       for (EntityMention em : ems.getMentionList())
         this.ml.add(EntityMentions.validate(em));
-  }
-
-  @Override
-  public ValidUUID getUUID() {
-    return this.uuid;
   }
 
   @Override

@@ -1,11 +1,13 @@
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap.Builder;
 
 import edu.jhu.hlt.concrete.TokenTagging;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
+import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
 public class TokenTaggings {
 
@@ -16,13 +18,15 @@ public class TokenTaggings {
     return new NecessarilyUniqueUUIDTokenTagging(tt);
   }
 
-  public static final List<ValidTokenTagging> extract(final Tokenization tkz) throws InvalidConcreteStructException {
+  public static final Map<ValidUUID, ValidTokenTagging> extract(final Tokenization tkz) throws InvalidConcreteStructException {
     final int ps = tkz.getTokenTaggingListSize();
-    List<ValidTokenTagging> pl = new ArrayList<>(ps);
+    Builder<ValidUUID, ValidTokenTagging> b = new Builder<>();
     if (ps > 0)
-      for (TokenTagging p : tkz.getTokenTaggingList())
-        pl.add(validate(p));
+      for (TokenTagging p : tkz.getTokenTaggingList()) {
+        ValidTokenTagging vtt = validate(p);
+        b.put(vtt.getUUID(), vtt);
+      }
 
-    return pl;
+    return b.build();
   }
 }

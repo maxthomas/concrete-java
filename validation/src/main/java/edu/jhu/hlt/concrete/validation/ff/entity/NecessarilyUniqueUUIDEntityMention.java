@@ -26,7 +26,6 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<EntityMention>
     implements ValidEntityMention {
 
-  private final ValidUUID uuid;
   private final FlattenedTokenRefSequence trs;
 
   private final Optional<String> entityType;
@@ -40,9 +39,7 @@ public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWi
    * @throws InvalidConcreteStructException on invalid {@link EntityMention}
    */
   NecessarilyUniqueUUIDEntityMention(final EntityMention e) throws InvalidConcreteStructException {
-    super(e);
-    this.uuid = UUIDs.validate(e.getUuid());
-    this.addNecessarilyUniqueUUID(this.uuid);
+    super(e, e.getUuid());
 
     this.entityType = Optional.ofNullable(e.getEntityType());
     this.phraseType = Optional.ofNullable(e.getPhraseType());
@@ -78,18 +75,13 @@ public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWi
   }
 
   @Override
-  public ValidUUID getUUID() {
-    return this.uuid;
+  public List<Integer> getTokenIndices() {
+    return this.trs.getTokenIndices();
   }
 
   @Override
-  public List<Integer> getTokens() {
-    return this.trs.getTokens();
-  }
-
-  @Override
-  public Optional<Integer> getAnchorToken() {
-    return this.trs.getAnchorToken();
+  public Optional<Integer> getAnchorTokenIndex() {
+    return this.trs.getAnchorTokenIndex();
   }
 
   @Override

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2012-2016 Johns Hopkins University HLTCOE. All rights reserved.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.concrete.validation.ff;
 
 import java.util.UUID;
@@ -9,7 +13,7 @@ import java.util.UUID;
  * <br><br>
  * The following checks are performed:
  * <ul>
- * <li>parsed into a {@link java.util.UUID} to ensure validity</li>
+ * <li>parsed into a {@link java.util.UUID} to ensure semantic validity</li>
  * </ul>
  */
 public class SemanticallyValidNonNullUUID implements ValidUUID {
