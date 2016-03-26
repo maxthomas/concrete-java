@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/maxthomas/concrete-java.svg?branch=master)](https://travis-ci.org/maxthomas/concrete-java)
+[![Build Status](https://travis-ci.org/maxthomas/concrete-java.svg?branch=ci)](https://travis-ci.org/maxthomas/concrete-java)
 
 Copyright 2012-2015 Johns Hopkins University HLTCOE. All rights
 reserved.  This software is released under the 2-clause BSD license.
