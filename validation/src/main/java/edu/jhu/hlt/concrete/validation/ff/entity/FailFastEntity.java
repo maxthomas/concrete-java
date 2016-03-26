@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
 import edu.jhu.hlt.concrete.Entity;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyUniqueUUIDs;
@@ -18,7 +20,7 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 /**
  * Implementation of {@link ValidEntity} that makes the following assumptions:
  * <ul>
- * <li>if set, the list of mention UUIDs are unique</li>
+ * <li>if set, the list of mention UUIDs are unique and contains no <code>null</code> elements</li>
  * </ul>
  */
 public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Entity>
@@ -35,13 +37,15 @@ public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueU
   FailFastEntity(final Entity e) throws InvalidConcreteStructException {
     super(e, e.getUuid());
     final int mls = e.getMentionIdListSize();
-    this.menIDs = new HashSet<>(mls);
+    Set<ValidUUID> tmp = new HashSet<>(mls);
 
     if (mls > 0)
       for (UUID id : e.getMentionIdList())
-        if (!this.menIDs.add(UUIDs.validate(id)))
+        if (!tmp.add(UUIDs.validate(id).orElseThrow(() ->
+              new InvalidConcreteStructException("null mention UUIDs are not supported."))))
           throw new InvalidConcreteStructException("At least one mention ID is duplicated: " + id.toString());
 
+    this.menIDs = ImmutableSet.copyOf(tmp);
     this.type = Optional.ofNullable(e.getType());
     this.canonicalName = Optional.ofNullable(e.getCanonicalName());
     this.conf = Optional.ofNullable(e.getConfidence());
@@ -56,7 +60,7 @@ public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueU
 
   @Override
   public Set<ValidUUID> getMentionIDSet() {
-    return new HashSet<>(menIDs);
+    return this.menIDs;
   }
 
   @Override

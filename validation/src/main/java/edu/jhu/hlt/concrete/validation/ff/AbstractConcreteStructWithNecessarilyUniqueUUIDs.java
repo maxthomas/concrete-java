@@ -22,14 +22,16 @@ public abstract class AbstractConcreteStructWithNecessarilyUniqueUUIDs<T extends
 
   protected AbstractConcreteStructWithNecessarilyUniqueUUIDs(T t, UUID uuid) throws InvalidConcreteStructException {
     this.obj = t;
-    this.uuid = UUIDs.validate(uuid);
+    this.uuid = UUIDs.validate(uuid)
+        .orElseThrow(() -> new InvalidConcreteStructException("UUID cannot be null."));
 
     this.necessarilyUniqueUUIDs = new HashSet<>();
     this.addNecessarilyUniqueUUID(uuid);
   }
 
   private final void addNecessarilyUniqueUUID(edu.jhu.hlt.concrete.UUID concUuid) throws InvalidConcreteStructException {
-    ValidUUID vu = UUIDs.validate(concUuid);
+    ValidUUID vu = UUIDs.validate(concUuid)
+        .orElseThrow(() -> new InvalidConcreteStructException("Necessarily unique UUID cannot be null."));
     this.addNecessarilyUniqueUUID(vu);
   }
 

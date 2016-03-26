@@ -35,10 +35,7 @@ public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNe
       for (Entity e : es.getEntityList())
         this.el.add(Entities.validate(e));
 
-    if (es.isSetMentionSetId())
-      this.mentionSetUUID = Optional.of(UUIDs.validate(es.getMentionSetId()));
-    else
-      this.mentionSetUUID = Optional.empty();
+    this.mentionSetUUID = UUIDs.validate(es.getMentionSetId());
   }
 
   @Override

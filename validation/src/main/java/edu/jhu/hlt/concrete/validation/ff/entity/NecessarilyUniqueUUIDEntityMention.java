@@ -14,9 +14,9 @@ import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyU
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
-import edu.jhu.hlt.concrete.validation.ff.TokenRefSequences;
 import edu.jhu.hlt.concrete.validation.ff.UUIDs;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
+import edu.jhu.hlt.concrete.validation.ff.structure.TokenRefSequences;
 
 /**
  * Implementation of {@link ValidEntityMention} that makes the following assumptions:
@@ -51,7 +51,8 @@ public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWi
     this.children = new ArrayList<>(cls);
     if (cls > 0)
       for (UUID u : e.getChildMentionIdList())
-        this.children.add(UUIDs.validate(u));
+        this.children.add(UUIDs.validate(u)
+            .orElseThrow(() -> new InvalidConcreteStructException("null children UUIDs are not allowed.")));
   }
 
   @Override

@@ -3,9 +3,7 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -83,35 +81,36 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
     LOGGER.debug("Validating communication: {} [{}]", c.getId(), this.getUUID().toString());
     final int nSects = c.getSectionListSize();
     LOGGER.debug("Contains {} sections.", nSects);
-    Map<ValidUUID, ValidSection> uuidToSectMap = new LinkedHashMap<>(nSects);
+    ImmutableMap.Builder<ValidUUID, ValidSection> uuidToSectMap = new ImmutableMap.Builder<>();
     if (nSects > 0)
       for (Section s : c.getSectionList()) {
         ValidSection vs = Sections.validate(s);
         uuidToSectMap.put(vs.getUUID(), vs);
       }
 
-    this.idToSectMap = ImmutableMap.copyOf(uuidToSectMap);
+    this.idToSectMap = uuidToSectMap.build();
 
     final int nEMS = c.getEntityMentionSetListSize();
-    Map<ValidUUID, ValidEntityMentionSet> uuidToEMSMap = new LinkedHashMap<>(nEMS);
+    ImmutableMap.Builder<ValidUUID, ValidEntityMentionSet> uuidToEMSMap = new ImmutableMap.Builder<>();
     LOGGER.debug("Contains {} EntityMentionSets.", nEMS);
-    Builder<ValidUUID> b = ImmutableSet.builder();
     if (nEMS > 0) {
       for (EntityMentionSet ems : c.getEntityMentionSetList()) {
         ValidEntityMentionSet vems = EntityMentionSets.validate(ems);
         uuidToEMSMap.put(vems.getUUID(), vems);
       }
 
-      // Validation step: cache list of EntityMention UUIDs
-      // to validate Entity pointers later on
-      uuidToEMSMap.values()
-          .stream()
-          .flatMap(vems -> vems.getEntityList().stream())
-          .map(ValidEntityMention::getUUID)
-          .forEach(b::add);
     }
 
-    this.idToEMSMap = ImmutableMap.copyOf(uuidToEMSMap);
+    this.idToEMSMap = uuidToEMSMap.build();
+
+    // Validation step: cache list of EntityMention UUIDs
+    // to validate Entity pointers later on
+    Builder<ValidUUID> b = ImmutableSet.builder();
+    this.idToEMSMap.values()
+        .stream()
+        .flatMap(vems -> vems.getEntityList().stream())
+        .map(ValidEntityMention::getUUID)
+        .forEach(b::add);
     this.entityMentionUUIDSet = b.build();
 
     // Validate EntitySet ptrs against these
@@ -126,7 +125,7 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
 
     final int nES = c.getEntitySetListSize();
     LOGGER.debug("Contains {} EntitySets.", nES);
-    Map<ValidUUID, ValidEntitySet> uuidToESMap = new LinkedHashMap<>(nES);
+    ImmutableMap.Builder<ValidUUID, ValidEntitySet> uuidToESMap = new ImmutableMap.Builder<>();
     if (nES > 0) {
       for (EntitySet es : c.getEntitySetList()) {
         ValidEntitySet ves = EntitySets.validate(es);
@@ -152,8 +151,8 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
       }
     }
 
-    this.idToESMap = ImmutableMap.copyOf(uuidToESMap);
-    this.esL = ImmutableList.copyOf(uuidToESMap.values());
+    this.idToESMap = uuidToESMap.build();
+    this.esL = ImmutableList.copyOf(this.idToESMap.values());
 
     // TODO
     this.idToSentMap = ImmutableMap.of();

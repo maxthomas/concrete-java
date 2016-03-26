@@ -4,6 +4,8 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
+import java.util.Optional;
+
 import edu.jhu.hlt.concrete.UUID;
 
 /**
@@ -19,14 +21,16 @@ public class UUIDs {
   }
 
   /**
-   * Returns a semantically valid UUID.
-   *
-   * @param uuid the {@link UUID} to validate
-   * @return
+   * @param uuid the {@link UUID} to validate. <code>null</code> is OK.
+   * @return an {@link Optional} wrapping a {@link ValidUUID}, guaranteed
+   *  to be a semantically valid UUID.
    * @throws InvalidConcreteStructException on invalid UUID
    */
-  public static final ValidUUID validate(UUID uuid) throws InvalidConcreteStructException {
-    return new SemanticallyValidNonNullUUID(uuid);
+  public static final Optional<ValidUUID> validate(UUID uuid) throws InvalidConcreteStructException {
+    if (uuid == null)
+      return Optional.empty();
+    else
+      return Optional.of(new SemanticallyValidNonNullUUID(uuid));
   }
 
   /**

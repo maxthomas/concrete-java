@@ -1,7 +1,7 @@
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
-import edu.jhu.hlt.concrete.validation.ff.UUIDable;
+import edu.jhu.hlt.concrete.validation.ff.FlattenedMetadataWithValidUUID;
 
-public interface ValidParse extends UUIDable {
+public interface ValidParse extends FlattenedMetadataWithValidUUID {
 
 }

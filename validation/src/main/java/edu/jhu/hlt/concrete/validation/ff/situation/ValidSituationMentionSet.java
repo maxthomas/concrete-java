@@ -1,7 +1,7 @@
 package edu.jhu.hlt.concrete.validation.ff.situation;
 
-import edu.jhu.hlt.concrete.validation.ff.UUIDable;
+import edu.jhu.hlt.concrete.validation.ff.FlattenedMetadataWithValidUUID;
 
-public interface ValidSituationMentionSet extends UUIDable {
+public interface ValidSituationMentionSet extends FlattenedMetadataWithValidUUID {
 
 }
