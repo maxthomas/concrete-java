@@ -4,30 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.Entity;
 import edu.jhu.hlt.concrete.EntitySet;
-import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyUniqueUUIDs;
+import edu.jhu.hlt.concrete.validation.ff.AbstractUUIDableConcreteStructWithMetadataAndNecessarilyUniqueUUIDs;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.UUIDs;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
-public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<EntitySet>
+public class NecessarilyUniqueUUIDEntitySet extends AbstractUUIDableConcreteStructWithMetadataAndNecessarilyUniqueUUIDs<EntitySet>
     implements ValidEntitySet {
-
-  private final String tool;
-  private final int kb;
-  private final long ts;
 
   private final List<ValidEntity> el;
   private final Optional<ValidUUID> mentionSetUUID;
 
   NecessarilyUniqueUUIDEntitySet(EntitySet es) throws InvalidConcreteStructException {
-    super(es, es.getUuid());
-    AnnotationMetadata md = es.getMetadata();
-    this.tool = md.getTool();
-    this.kb = md.getKBest();
-    this.ts = md.getTimestamp();
+    super(es, es.getUuid(), es.getMetadata());
 
     final int els = es.getEntityListSize();
     this.el = new ArrayList<>(els);
@@ -36,21 +27,6 @@ public class NecessarilyUniqueUUIDEntitySet extends AbstractConcreteStructWithNe
         this.el.add(Entities.validate(e));
 
     this.mentionSetUUID = UUIDs.validate(es.getMentionSetId());
-  }
-
-  @Override
-  public String getTool() {
-    return this.tool;
-  }
-
-  @Override
-  public int getKBest() {
-    return this.kb;
-  }
-
-  @Override
-  public long getTimestamp() {
-    return this.ts;
   }
 
   @Override

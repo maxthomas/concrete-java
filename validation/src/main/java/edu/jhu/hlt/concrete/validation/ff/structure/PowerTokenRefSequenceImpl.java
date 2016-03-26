@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 import edu.jhu.hlt.concrete.validation.ff.PowerTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
@@ -59,12 +60,12 @@ public class PowerTokenRefSequenceImpl implements PowerTokenRefSequence {
   }
 
   @Override
-  public List<ValidToken> getTokens() {
+  public List<PowerToken> getTokens() {
     return this.tokenList;
   }
 
   @Override
-  public Optional<ValidToken> getAnchorToken() {
+  public Optional<PowerToken> getAnchorToken() {
     return this.anchorT;
   }
 

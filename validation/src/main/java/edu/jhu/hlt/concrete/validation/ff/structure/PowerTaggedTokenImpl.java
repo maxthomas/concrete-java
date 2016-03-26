@@ -11,6 +11,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.validation.ff.ConfidenceImpl;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.PowerTextSpan;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 
 /**
  *
@@ -66,12 +67,16 @@ public class PowerTaggedTokenImpl implements PowerTaggedToken {
 
   @Override
   public Optional<FlattenedTextSpan> getTextSpan() {
-    return this.vtt.get;
+    return Optional.empty();
   }
 
   @Override
   public Optional<PowerTextSpan> getPowerTextSpan() {
-    // TODO Auto-generated method stub
+    return Optional.empty();
+  }
+
+  @Override
+  public PowerToken getToken() {
     return null;
   }
 }

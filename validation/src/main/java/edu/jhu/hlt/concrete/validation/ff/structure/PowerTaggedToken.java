@@ -10,5 +10,5 @@ import edu.jhu.hlt.concrete.validation.ff.PowerToken;
  *
  */
 public interface PowerTaggedToken extends ValidTaggedToken, PowerToken {
-
+  public PowerToken getToken();
 }
