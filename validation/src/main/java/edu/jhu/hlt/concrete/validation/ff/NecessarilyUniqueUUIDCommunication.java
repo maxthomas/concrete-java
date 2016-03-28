@@ -4,7 +4,7 @@
 package edu.jhu.hlt.concrete.validation.ff;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -21,18 +20,18 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMentionSet;
 import edu.jhu.hlt.concrete.EntitySet;
 import edu.jhu.hlt.concrete.Section;
-import edu.jhu.hlt.concrete.validation.ff.entity.EntityMentionSets;
-import edu.jhu.hlt.concrete.validation.ff.entity.EntitySets;
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntity;
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntityMention;
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntityMentionSet;
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntitySet;
-import edu.jhu.hlt.concrete.validation.ff.situation.ValidSituationMentionSet;
-import edu.jhu.hlt.concrete.validation.ff.situation.ValidSituationSet;
+import edu.jhu.hlt.concrete.validation.ff.entity.EntityGroups;
+import edu.jhu.hlt.concrete.validation.ff.entity.EntityMentionGroups;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntity;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntityGroup;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntityMention;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntityMentionGroup;
+import edu.jhu.hlt.concrete.validation.ff.situation.PowerSituationGroup;
+import edu.jhu.hlt.concrete.validation.ff.situation.PowerSituationMentionGroup;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerSection;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerSentence;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerTokenization;
 import edu.jhu.hlt.concrete.validation.ff.structure.Sections;
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidSentence;
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidTokenization;
 
 /**
  * Implementation of {@link ValidCommunication} that provides validation and utility
@@ -56,21 +55,13 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
 
   protected final ImmutableSet<ValidUUID> entityMentionUUIDSet;
 
-  private final ImmutableMap<ValidUUID, ValidSection> idToSectMap;
-  private final ImmutableMap<ValidUUID, ValidSentence> idToSentMap;
-  private final ImmutableMap<ValidUUID, ValidTokenization> idToTkzMap;
-  private final ImmutableMap<ValidUUID, ValidEntityMentionSet> idToEMSMap;
-  private final ImmutableMap<ValidUUID, ValidEntitySet> idToESMap;
-  private final ImmutableMap<ValidUUID, ValidSituationMentionSet> idToSitMensMap;
-  private final ImmutableMap<ValidUUID, ValidSituationSet> idToSitsMap;
-
-  //////////////////////////////////////////////////////
-  // The following are lazily computed upon invocation
-  // of the methods that use them
-  //////////////////////////////////////////////////////
-  private ImmutableList<ValidSection> sList = null;
-  private ImmutableList<ValidEntityMentionSet> emsL = null;
-  private ImmutableList<ValidEntitySet> esL = null;
+  private final ImmutableMap<ValidUUID, PowerSection> idToSectMap;
+  private final ImmutableMap<ValidUUID, PowerSentence> idToSentMap;
+  private final ImmutableMap<ValidUUID, PowerTokenization> idToTkzMap;
+  private final ImmutableMap<ValidUUID, PowerEntityMentionGroup> idToEMSMap;
+  private final ImmutableMap<ValidUUID, PowerEntityGroup> idToESMap;
+  private final ImmutableMap<ValidUUID, PowerSituationMentionGroup> idToSitMensMap;
+  private final ImmutableMap<ValidUUID, PowerSituationGroup> idToSitsMap;
 
   /**
    * @param c the {@link Communication} to wrap
@@ -81,21 +72,21 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
     LOGGER.debug("Validating communication: {} [{}]", c.getId(), this.getUUID().toString());
     final int nSects = c.getSectionListSize();
     LOGGER.debug("Contains {} sections.", nSects);
-    ImmutableMap.Builder<ValidUUID, ValidSection> uuidToSectMap = new ImmutableMap.Builder<>();
+    ImmutableMap.Builder<ValidUUID, PowerSection> uuidToSectMap = new ImmutableMap.Builder<>();
     if (nSects > 0)
       for (Section s : c.getSectionList()) {
-        ValidSection vs = Sections.validate(s);
+        PowerSection vs = Sections.empower(s, c);
         uuidToSectMap.put(vs.getUUID(), vs);
       }
 
     this.idToSectMap = uuidToSectMap.build();
 
     final int nEMS = c.getEntityMentionSetListSize();
-    ImmutableMap.Builder<ValidUUID, ValidEntityMentionSet> uuidToEMSMap = new ImmutableMap.Builder<>();
+    ImmutableMap.Builder<ValidUUID, PowerEntityMentionGroup> uuidToEMSMap = new ImmutableMap.Builder<>();
     LOGGER.debug("Contains {} EntityMentionSets.", nEMS);
     if (nEMS > 0) {
       for (EntityMentionSet ems : c.getEntityMentionSetList()) {
-        ValidEntityMentionSet vems = EntityMentionSets.validate(ems);
+        PowerEntityMentionGroup vems = EntityMentionGroups.empower(ems, c);
         uuidToEMSMap.put(vems.getUUID(), vems);
       }
 
@@ -109,7 +100,7 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
     this.idToEMSMap.values()
         .stream()
         .flatMap(vems -> vems.getEntityList().stream())
-        .map(ValidEntityMention::getUUID)
+        .map(PowerEntityMention::getUUID)
         .forEach(b::add);
     this.entityMentionUUIDSet = b.build();
 
@@ -118,17 +109,17 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
     Builder<ValidUUID> emsUUIDBuilder = ImmutableSet.builder();
     this.idToEMSMap.values()
         .stream()
-        .map(ValidEntityMentionSet::getUUID)
+        .map(PowerEntityMentionGroup::getUUID)
         .forEach(emsUUIDBuilder::add);
     ImmutableSet<ValidUUID> vemsUUIDSet = emsUUIDBuilder.build();
     LOGGER.debug("EMS ID set contains {} items.", vemsUUIDSet.size());
 
     final int nES = c.getEntitySetListSize();
     LOGGER.debug("Contains {} EntitySets.", nES);
-    ImmutableMap.Builder<ValidUUID, ValidEntitySet> uuidToESMap = new ImmutableMap.Builder<>();
+    ImmutableMap.Builder<ValidUUID, PowerEntityGroup> uuidToESMap = new ImmutableMap.Builder<>();
     if (nES > 0) {
       for (EntitySet es : c.getEntitySetList()) {
-        ValidEntitySet ves = EntitySets.validate(es);
+        PowerEntityGroup ves = EntityGroups.validate(es);
         uuidToESMap.put(ves.getUUID(), ves);
         if (ves.getMentionSetUUID().isPresent()) {
           ValidUUID ptr = ves.getMentionSetUUID().get();
@@ -139,7 +130,7 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
         }
 
         List<Set<ValidUUID>> mentionUUIDSetList = ves.getEntityList().stream()
-            .map(ValidEntity::getMentionIDSet)
+            .map(PowerEntity::getMentionIDSet)
             .collect(Collectors.toList());
 
         // Assert that all pointers of mentions are actually
@@ -152,7 +143,6 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
     }
 
     this.idToESMap = uuidToESMap.build();
-    this.esL = ImmutableList.copyOf(this.idToESMap.values());
 
     // TODO
     this.idToSentMap = ImmutableMap.of();
@@ -162,62 +152,37 @@ public class NecessarilyUniqueUUIDCommunication extends AbstractConcreteStructWi
   }
 
   @Override
-  public List<ValidEntitySet> getEntitySetList() {
-    if (this.esL == null)
-      this.esL = ImmutableList.copyOf(this.idToESMap.values());
-    return this.esL;
+  public Map<ValidUUID, PowerSection> getIdToSectionMap() {
+    return this.idToSectMap;
   }
 
   @Override
-  public List<ValidEntityMentionSet> getEntityMentionSetList() {
-    if (this.emsL == null)
-      this.emsL = ImmutableList.copyOf(this.emsL);
-    return this.emsL;
+  public Map<ValidUUID, PowerSentence> getIdToSentenceMap() {
+    return this.idToSentMap;
   }
 
   @Override
-  public List<ValidSection> getSectionList() {
-    if (this.sList == null)
-      this.sList = ImmutableList.copyOf(this.idToSectMap.values());
-    return this.sList;
+  public Map<ValidUUID, PowerTokenization> getIdToTokenizationMap() {
+    return this.idToTkzMap;
   }
 
   @Override
-  public Optional<ValidEntitySet> getEntitySet(ValidUUID uuid) {
-    return Optional.ofNullable(this.idToESMap.get(uuid));
+  public Map<ValidUUID, PowerEntityMentionGroup> getIdToEntityMentionsMap() {
+    return this.idToEMSMap;
   }
 
   @Override
-  public Optional<ValidEntityMentionSet> getEntityMentionSet(ValidUUID uuid) {
-    return Optional.ofNullable(this.idToEMSMap.get(uuid));
+  public Map<ValidUUID, PowerSituationMentionGroup> getIdToSituationMentionsMap() {
+    return this.idToSitMensMap;
   }
 
   @Override
-  public Optional<ValidSection> getSection(ValidUUID uuid) {
-    return Optional.ofNullable(this.idToSectMap.get(uuid));
+  public Map<ValidUUID, PowerEntityGroup> getIdToEntitiesMap() {
+    return this.idToESMap;
   }
 
   @Override
-  public List<ValidSituationSet> getSituationSetList() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<ValidSituationMentionSet> getSituationMentionSetList() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<ValidSentence> getSentenceList() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<ValidTokenization> getTokenizationList() {
-    // TODO Auto-generated method stub
-    return null;
+  public Map<ValidUUID, PowerSituationGroup> getIdToSituationsMap() {
+    return this.idToSitsMap;
   }
 }

@@ -4,11 +4,18 @@
  */
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
+import java.util.Optional;
+
 import edu.jhu.hlt.concrete.validation.ff.PowerTokenRefSequence;
+import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
 /**
  *
  */
-public interface PowerSpanLink extends PowerTokenRefSequence, ValidSpanLink {
+public interface PowerSpanLink extends PowerTokenRefSequence {
+  public Optional<String> getExternalTarget();
 
+  public Optional<ValidUUID> getConcreteTarget();
+
+  public String getLinkType();
 }

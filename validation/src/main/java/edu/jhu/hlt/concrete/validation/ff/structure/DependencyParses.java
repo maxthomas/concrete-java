@@ -14,16 +14,17 @@ public class DependencyParses {
   private DependencyParses() {
   }
 
-  public static final ValidDependencyParse validate(final DependencyParse dp) throws InvalidConcreteStructException {
+  public static final PowerDependencyParse validate(final DependencyParse dp)
+      throws InvalidConcreteStructException {
     return new NecessarilyUniqueUUIDDepParse(dp);
   }
 
-  public static final Map<ValidUUID, ValidDependencyParse> extract(final Tokenization tkz) throws InvalidConcreteStructException {
+  public static final Map<ValidUUID, PowerDependencyParse> extract(final Tokenization tkz) throws InvalidConcreteStructException {
     final int ps = tkz.getDependencyParseListSize();
-    Builder<ValidUUID, ValidDependencyParse> b = new Builder<>();
+    Builder<ValidUUID, PowerDependencyParse> b = new Builder<>();
     if (ps > 0)
       for (DependencyParse p : tkz.getDependencyParseList()) {
-        ValidDependencyParse vp = validate(p);
+        PowerDependencyParse vp = validate(p);
         b.put(vp.getUUID(), vp);
       }
 

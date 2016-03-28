@@ -5,7 +5,7 @@ import edu.jhu.hlt.concrete.validation.ff.AbstractUUIDableConcreteStructWithMeta
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 
 public class NecessarilyUniqueUUIDDepParse extends AbstractUUIDableConcreteStructWithMetadataAndNecessarilyUniqueUUIDs<DependencyParse>
-    implements ValidDependencyParse {
+    implements PowerDependencyParse {
 
   public NecessarilyUniqueUUIDDepParse(DependencyParse dp) throws InvalidConcreteStructException {
     super(dp, dp.getUuid(), dp.getMetadata());

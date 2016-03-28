@@ -14,16 +14,16 @@ public class Parses {
 
   }
 
-  public static final ValidParse validate(final Parse p) throws InvalidConcreteStructException {
+  public static final PowerParse validate(final Parse p) throws InvalidConcreteStructException {
     return new NecessarilyUniqueUUIDParse(p);
   }
 
-  public static final Map<ValidUUID, ValidParse> extract(final Tokenization tkz) throws InvalidConcreteStructException {
+  public static final Map<ValidUUID, PowerParse> extract(final Tokenization tkz) throws InvalidConcreteStructException {
     final int ps = tkz.getParseListSize();
-    Builder<ValidUUID, ValidParse> b = new Builder<>();
+    Builder<ValidUUID, PowerParse> b = new Builder<>();
     if (ps > 0)
       for (Parse p : tkz.getParseList()) {
-        ValidParse vp = Parses.validate(p);
+        PowerParse vp = Parses.validate(p);
         b.put(vp.getUUID(), vp);
       }
 

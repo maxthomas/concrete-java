@@ -4,6 +4,6 @@ import java.util.List;
 
 import edu.jhu.hlt.concrete.validation.ff.FlattenedMetadataWithValidUUID;
 
-public interface ValidEntityMentionSet extends FlattenedMetadataWithValidUUID {
-  public List<ValidEntityMention> getEntityList();
+public interface PowerEntityMentionGroup extends FlattenedMetadataWithValidUUID {
+  public List<PowerEntityMention> getEntityList();
 }

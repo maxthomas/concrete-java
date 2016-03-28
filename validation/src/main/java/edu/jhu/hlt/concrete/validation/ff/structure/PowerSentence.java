@@ -7,10 +7,11 @@ package edu.jhu.hlt.concrete.validation.ff.structure;
 import java.util.Optional;
 
 import edu.jhu.hlt.concrete.validation.ff.PowerTextSpannable;
+import edu.jhu.hlt.concrete.validation.ff.UUIDable;
 
 /**
  *
  */
-public interface PowerSentence extends ValidSentence, PowerTextSpannable {
+public interface PowerSentence extends UUIDable, PowerTextSpannable {
   public Optional<PowerTokenization> getPowerTokenization();
 }

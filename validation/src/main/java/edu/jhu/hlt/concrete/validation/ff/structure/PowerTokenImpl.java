@@ -7,7 +7,7 @@ package edu.jhu.hlt.concrete.validation.ff.structure;
 import java.util.Optional;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
+import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.PowerTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.PowerToken;
@@ -18,17 +18,21 @@ import edu.jhu.hlt.concrete.validation.ff.TextSpans;
  */
 public class PowerTokenImpl implements PowerToken {
 
-  private final ValidToken vt;
   private final Optional<PowerTextSpan> pts;
+  private final int idx;
+  private final Optional<String> ttext;
 
   /**
    * @param tok
    * @param c
    * @throws InvalidConcreteStructException on validation error
    */
-  PowerTokenImpl(ValidToken tok, Communication c) throws InvalidConcreteStructException {
-    this.pts = TextSpans.empower(tok, c);
-    this.vt = tok;
+  PowerTokenImpl(Token tok, Communication c) throws InvalidConcreteStructException {
+    this.idx = tok.getTokenIndex();
+    if (this.idx < 0)
+      throw new InvalidConcreteStructException("Index cannot be less than zero.");
+    this.ttext = Optional.ofNullable(tok.getText());
+    this.pts = TextSpans.empower(tok.getTextSpan(), c);
   }
 
   /* (non-Javadoc)
@@ -36,15 +40,7 @@ public class PowerTokenImpl implements PowerToken {
    */
   @Override
   public Optional<String> getTokenText() {
-    return this.vt.getTokenText();
-  }
-
-  /* (non-Javadoc)
-   * @see edu.jhu.hlt.concrete.validation.ff.TextSpannable#getTextSpan()
-   */
-  @Override
-  public Optional<FlattenedTextSpan> getTextSpan() {
-    return this.vt.getTextSpan();
+    return this.ttext;
   }
 
   /* (non-Javadoc)
@@ -52,14 +48,14 @@ public class PowerTokenImpl implements PowerToken {
    */
   @Override
   public int getIndex() {
-    return this.vt.getIndex();
+    return this.idx;
   }
 
   /* (non-Javadoc)
    * @see edu.jhu.hlt.concrete.validation.ff.PowerTextSpannable#getPowerTextSpan()
    */
   @Override
-  public Optional<PowerTextSpan> getPowerTextSpan() {
+  public Optional<PowerTextSpan> getTextSpan() {
     return this.pts;
   }
 }

@@ -4,11 +4,9 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidToken;
-
 /**
- * An interface for objects that can produce {@link ValidToken}s.
+ * An interface for objects that can produce {@link PowerToken}s.
  */
 public interface Tokenable {
-  public ValidToken getToken();
+  public PowerToken getToken();
 }

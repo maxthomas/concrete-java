@@ -7,12 +7,11 @@ package edu.jhu.hlt.concrete.validation.ff;
 import java.util.Optional;
 
 /**
- * Extension of the {@link TextSpannable} interface that represents
- * an object that can return an optional {@link PowerTextSpan} object.
+ * Interface that represents an object that can return an optional
+ * {@link PowerTextSpan} object.
  *
  * @see PowerTextSpan
- * @see TextSpannable
  */
-public interface PowerTextSpannable extends TextSpannable {
-  public Optional<PowerTextSpan> getPowerTextSpan();
+public interface PowerTextSpannable {
+  public Optional<PowerTextSpan> getTextSpan();
 }

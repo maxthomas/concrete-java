@@ -14,16 +14,16 @@ public class TokenTaggings {
   private TokenTaggings() {
   }
 
-  public static final ValidTokenTagging validate(final TokenTagging tt) throws InvalidConcreteStructException {
+  public static final PowerTokenTagging validate(final TokenTagging tt) throws InvalidConcreteStructException {
     return new NecessarilyUniqueUUIDTokenTagging(tt);
   }
 
-  public static final Map<ValidUUID, ValidTokenTagging> extract(final Tokenization tkz) throws InvalidConcreteStructException {
+  public static final Map<ValidUUID, PowerTokenTagging> extract(final Tokenization tkz) throws InvalidConcreteStructException {
     final int ps = tkz.getTokenTaggingListSize();
-    Builder<ValidUUID, ValidTokenTagging> b = new Builder<>();
+    Builder<ValidUUID, PowerTokenTagging> b = new Builder<>();
     if (ps > 0)
       for (TokenTagging p : tkz.getTokenTaggingList()) {
-        ValidTokenTagging vtt = validate(p);
+        PowerTokenTagging vtt = validate(p);
         b.put(vtt.getUUID(), vtt);
       }
 

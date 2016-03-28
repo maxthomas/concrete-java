@@ -8,14 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyUniqueUUIDs;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 import edu.jhu.hlt.concrete.validation.ff.UUIDs;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerTokenization;
 import edu.jhu.hlt.concrete.validation.ff.structure.TokenRefSequences;
 
 /**
@@ -24,7 +27,7 @@ import edu.jhu.hlt.concrete.validation.ff.structure.TokenRefSequences;
  * </ul>
  */
 public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<EntityMention>
-    implements ValidEntityMention {
+    implements PowerEntityMention {
 
   private final FlattenedTokenRefSequence trs;
 
@@ -38,13 +41,24 @@ public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWi
   /**
    * @throws InvalidConcreteStructException on invalid {@link EntityMention}
    */
-  NecessarilyUniqueUUIDEntityMention(final EntityMention e) throws InvalidConcreteStructException {
+  NecessarilyUniqueUUIDEntityMention(final EntityMention e, Communication c)
+      throws InvalidConcreteStructException {
     super(e, e.getUuid());
 
     this.entityType = Optional.ofNullable(e.getEntityType());
     this.phraseType = Optional.ofNullable(e.getPhraseType());
     this.text = Optional.ofNullable(e.getText());
     this.conf = Optional.ofNullable(e.getConfidence());
+
+    // TODO: handle validation
+//    // flatten tokens
+//    ValidUUID tkzID = this.em.getTokenizationUUID();
+//    if (!tptrs.containsKey(tkzID))
+//      throw new InvalidConcreteStructException("Tokenization UUID for this EntityMention was not found in "
+//          + "the list of passed in pointers.");
+//
+//    this.tptr = tptrs.get(tkzID);
+//    this.ptrs = TokenRefSequences.empower(em, this.tptr);
 
     this.trs = TokenRefSequences.flatten(e.getTokens());
     final int cls = e.getChildMentionIdListSize();
@@ -98,5 +112,29 @@ public class NecessarilyUniqueUUIDEntityMention extends AbstractConcreteStructWi
   @Override
   public List<ValidUUID> getChildMentionUUIDList() {
     return new ArrayList<>(this.children);
+  }
+
+  @Override
+  public List<PowerToken> getTokens() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Optional<PowerToken> getAnchorToken() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PowerTokenization getTokenization() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public List<PowerEntityMention> getChildMentions() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

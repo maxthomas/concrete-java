@@ -16,7 +16,7 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
  * not defined, but the operations of the Set collection are more useful
  * (for example, finding shared mentions across multiple Entities).
  */
-public interface ValidEntity extends UUIDable, ConfidenceScorable {
+public interface PowerEntity extends UUIDable, ConfidenceScorable {
   public Set<ValidUUID> getMentionIDSet();
 
   public Optional<String> getType();

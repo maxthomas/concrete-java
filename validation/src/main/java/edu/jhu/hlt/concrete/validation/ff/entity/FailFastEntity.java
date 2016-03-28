@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Entity;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyUniqueUUIDs;
@@ -24,7 +25,7 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
  * </ul>
  */
 public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Entity>
-    implements ValidEntity {
+    implements PowerEntity {
 
   private final Set<ValidUUID> menIDs;
   private final Optional<String> type;
@@ -34,7 +35,7 @@ public class FailFastEntity extends AbstractConcreteStructWithNecessarilyUniqueU
   /**
    * @throws InvalidConcreteStructException on invalid {@link Entity} (duplicate UUIDs)
    */
-  FailFastEntity(final Entity e) throws InvalidConcreteStructException {
+  FailFastEntity(final Entity e, Communication c) throws InvalidConcreteStructException {
     super(e, e.getUuid());
     final int mls = e.getMentionIdListSize();
     Set<ValidUUID> tmp = new HashSet<>(mls);

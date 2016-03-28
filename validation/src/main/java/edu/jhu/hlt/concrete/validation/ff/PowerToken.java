@@ -4,12 +4,14 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
+import java.util.Optional;
+
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Token;
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidToken;
+import edu.jhu.hlt.concrete.validation.ff.structure.ZeroBasedIndexable;
 
 /**
- * An interface that extends {@link ValidToken} by adding
+ * An interface that extends {@link Token} by adding
  * the {@link PowerTextSpannable} interface.
  * <br><br>
  * Useful in the case of
@@ -17,9 +19,8 @@ import edu.jhu.hlt.concrete.validation.ff.structure.ValidToken;
  * the underlying text represented by this object, the {@link PowerTextSpan}
  * can be used.
  *
- * @see ValidToken
  * @see PowerTextSpannable
  */
-public interface PowerToken extends ValidToken, PowerTextSpannable {
-
+public interface PowerToken extends ZeroBasedIndexable, PowerTextSpannable {
+  public Optional<String> getTokenText();
 }

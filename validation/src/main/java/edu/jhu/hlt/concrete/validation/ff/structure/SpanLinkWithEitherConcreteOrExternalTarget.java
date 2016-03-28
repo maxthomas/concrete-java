@@ -3,21 +3,23 @@ package edu.jhu.hlt.concrete.validation.ff.structure;
 import java.util.List;
 import java.util.Optional;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.SpanLink;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 import edu.jhu.hlt.concrete.validation.ff.UUIDs;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
-public class SpanLinkWithEitherConcreteOrExternalTarget implements ValidSpanLink {
+public class SpanLinkWithEitherConcreteOrExternalTarget implements PowerSpanLink {
 
   private final String type;
   private final Optional<ValidUUID> concreteTarget;
   private final Optional<String> externalTarget;
   private final FlattenedTokenRefSequence trs;
 
-  SpanLinkWithEitherConcreteOrExternalTarget(final SpanLink vsl)
+  SpanLinkWithEitherConcreteOrExternalTarget(final SpanLink vsl, Communication c)
       throws InvalidConcreteStructException {
 
     if (!vsl.isSetConcreteTarget()
@@ -63,5 +65,23 @@ public class SpanLinkWithEitherConcreteOrExternalTarget implements ValidSpanLink
   @Override
   public String getLinkType() {
     return this.type;
+  }
+
+  @Override
+  public List<PowerToken> getTokens() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Optional<PowerToken> getAnchorToken() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PowerTokenization getTokenization() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

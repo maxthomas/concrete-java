@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap.Builder;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Token;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.TokenizationKind;
@@ -12,27 +13,29 @@ import edu.jhu.hlt.concrete.validation.ff.AbstractConcreteStructWithNecessarilyU
 import edu.jhu.hlt.concrete.validation.ff.FlattenedMetadata;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.Metadata;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 
 public class NecessarilyUniqueUUIDTokenization extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<Tokenization>
-    implements ValidTokenization {
+    implements PowerTokenization {
 
-  private final Map<Integer, ValidToken> idxToTokenMap;
+  private final Map<Integer, PowerToken> idxToTokenMap;
   private final FlattenedMetadata md;
   private final TokenizationKind type;
 
-  private final Map<ValidUUID, ValidParse> parses;
-  private final Map<ValidUUID, ValidDependencyParse> dps;
-  private final Map<ValidUUID, ValidTokenTagging> tts;
-  private final List<ValidSpanLink> sll;
+  private final Map<ValidUUID, PowerParse> parses;
+  private final Map<ValidUUID, PowerDependencyParse> dps;
+  private final Map<ValidUUID, PowerTokenTagging> tts;
+  private final List<PowerSpanLink> sll;
 
-  NecessarilyUniqueUUIDTokenization(Tokenization tkz) throws InvalidConcreteStructException {
+  NecessarilyUniqueUUIDTokenization(Tokenization tkz, Communication c)
+      throws InvalidConcreteStructException {
     super(tkz, tkz.getUuid());
     this.type = tkz.getKind();
     this.md = Metadata.validate(tkz.getMetadata());
-    Builder<Integer, ValidToken> b = new Builder<>();
+    Builder<Integer, PowerToken> b = new Builder<>();
     for (Token t : tkz.getTokenList().getTokenList()) {
-      ValidToken vt = Tokens.validate(t);
+      PowerToken vt = Tokens.empower(t, c);
       b.put(vt.getIndex(), vt);
     }
 
@@ -41,26 +44,26 @@ public class NecessarilyUniqueUUIDTokenization extends AbstractConcreteStructWit
     this.parses = Parses.extract(tkz);
     this.dps = DependencyParses.extract(tkz);
     this.tts = TokenTaggings.extract(tkz);
-    this.sll = SpanLinks.extract(tkz);
+    this.sll = SpanLinks.extract(tkz, c);
   }
 
   @Override
-  public Map<Integer, ValidToken> getIndexToTokenMap() {
+  public Map<Integer, PowerToken> getIndexToTokenMap() {
     return this.idxToTokenMap;
   }
 
   @Override
-  public Map<ValidUUID, ValidParse> getIdToParseMap() {
+  public Map<ValidUUID, PowerParse> getIdToParseMap() {
     return this.parses;
   }
 
   @Override
-  public Map<ValidUUID, ValidDependencyParse> getIdToDependencyParseMap() {
+  public Map<ValidUUID, PowerDependencyParse> getIdToDependencyParseMap() {
     return this.dps;
   }
 
   @Override
-  public Map<ValidUUID, ValidTokenTagging> getIdToTokenTaggingMap() {
+  public Map<ValidUUID, PowerTokenTagging> getIdToTokenTaggingMap() {
     return this.tts;
   }
 
@@ -85,7 +88,7 @@ public class NecessarilyUniqueUUIDTokenization extends AbstractConcreteStructWit
   }
 
   @Override
-  public List<ValidSpanLink> getSpanLinks() {
+  public List<PowerSpanLink> getSpanLinks() {
     return this.sll;
   }
 }

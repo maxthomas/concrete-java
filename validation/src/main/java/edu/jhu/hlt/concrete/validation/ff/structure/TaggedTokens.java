@@ -16,7 +16,8 @@ public class TaggedTokens {
 
   }
 
-  public static final ValidTaggedToken validate(TaggedToken tt) throws InvalidConcreteStructException {
-
+  public static final PowerTaggedToken validate(TaggedToken tt) throws InvalidConcreteStructException {
+    return null;
+    //TODO
   }
 }

@@ -4,23 +4,34 @@
  */
 package edu.jhu.hlt.concrete.validation.ff;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntityMentionSet;
-import edu.jhu.hlt.concrete.validation.ff.entity.ValidEntitySet;
-import edu.jhu.hlt.concrete.validation.ff.structure.ValidSection;
+import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.serialization.Concretable;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntityGroup;
+import edu.jhu.hlt.concrete.validation.ff.entity.PowerEntityMentionGroup;
+import edu.jhu.hlt.concrete.validation.ff.situation.PowerSituationGroup;
+import edu.jhu.hlt.concrete.validation.ff.situation.PowerSituationMentionGroup;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerSection;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerSentence;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerTokenization;
 
-public interface PowerCommunication extends ValidCommunication {
+/**
+ * A powerful alternative to Concrete {@link Communication} objects,
+ * adding utility functionality otherwise not present.
+ * <br><br>
+ * This interfaces offers {@link ValidUUID}:struct lookups for most
+ * annotations, allowing a specific {@link UUIDable} object to be
+ * retrieved from the top of the communication object.
+ */
+public interface PowerCommunication extends UUIDable, Concretable<Communication> {
+  public Map<ValidUUID, PowerSection> getIdToSectionMap();
+  public Map<ValidUUID, PowerSentence> getIdToSentenceMap();
+  public Map<ValidUUID, PowerTokenization> getIdToTokenizationMap();
 
-  public List<PowerEntityMentionSet> getEntityMentionSets();
+  public Map<ValidUUID, PowerEntityMentionGroup> getIdToEntityMentionsMap();
+  public Map<ValidUUID, PowerEntityGroup> getIdToEntitiesMap();
 
-  ////////////////////////////////////////
-  // UUID-lookup methods
-  ////////////////////////////////////////
-  public Optional<ValidEntitySet> getEntitySet(ValidUUID uuid);
-
-  public Optional<ValidEntityMentionSet> getEntityMentionSet(ValidUUID uuid);
-
-  public Optional<ValidSection> getSection(ValidUUID uuid);
+  public Map<ValidUUID, PowerSituationMentionGroup> getIdToSituationMentionsMap();
+  public Map<ValidUUID, PowerSituationGroup> getIdToSituationsMap();
 }

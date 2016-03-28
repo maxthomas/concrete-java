@@ -10,7 +10,7 @@ import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.Metadata;
 
 public class NecessarilyUniqueUUIDTokenTagging extends AbstractConcreteStructWithNecessarilyUniqueUUIDs<TokenTagging>
-    implements ValidTokenTagging {
+    implements PowerTokenTagging {
 
   private final FlattenedMetadata md;
   private final Optional<String> tagType;
@@ -47,7 +47,8 @@ public class NecessarilyUniqueUUIDTokenTagging extends AbstractConcreteStructWit
   }
 
   @Override
-  public Map<Integer, ValidTaggedToken> getIndexToTaggedTokenMap() {
+  public Map<Integer, PowerTaggedToken> getIndexToTaggedTokenMap() {
+    //TODO:
     return null;
   }
 }

@@ -4,11 +4,20 @@
  */
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
+import java.util.Map;
+import java.util.Optional;
+
+import edu.jhu.hlt.concrete.miscommunication.ConfidenceScorable;
+import edu.jhu.hlt.concrete.validation.ff.ConfidenceImpl;
 import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 
 /**
  *
  */
-public interface PowerTaggedToken extends ValidTaggedToken, PowerToken {
+public interface PowerTaggedToken extends ConfidenceScorable, ZeroBasedIndexable, PowerToken {
+  public Optional<String> getBestTag();
+
+  public Map<String, ConfidenceImpl> getTagToConfidenceMap();
+
   public PowerToken getToken();
 }

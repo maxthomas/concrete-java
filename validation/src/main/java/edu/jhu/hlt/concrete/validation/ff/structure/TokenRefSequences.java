@@ -5,7 +5,6 @@
 package edu.jhu.hlt.concrete.validation.ff.structure;
 
 import edu.jhu.hlt.concrete.TokenRefSequence;
-import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.validation.ff.FlattenedTokenRefSequence;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 import edu.jhu.hlt.concrete.validation.ff.PowerTokenRefSequence;
@@ -23,12 +22,7 @@ public class TokenRefSequences {
     return new StandaloneValidTokenRefSequence(trs);
   }
 
-  public static final PowerTokenRefSequence empower(FlattenedTokenRefSequence trs, ValidTokenization vtkz) throws InvalidConcreteStructException {
+  public static final PowerTokenRefSequence empower(FlattenedTokenRefSequence trs, PowerTokenization vtkz) throws InvalidConcreteStructException {
     return new PowerTokenRefSequenceImpl(trs, vtkz);
-  }
-
-  public static final PowerTokenRefSequence empower(TokenRefSequence trs, Tokenization vtkz) throws InvalidConcreteStructException {
-    return new PowerTokenRefSequenceImpl(flatten(trs),
-        Tokenizations.validate(vtkz));
   }
 }

@@ -23,22 +23,22 @@ import edu.jhu.hlt.concrete.validation.ff.ValidUUID;
 public class PowerTokenRefSequenceImpl implements PowerTokenRefSequence {
 
   private final FlattenedTokenRefSequence vtrs;
-  private final ValidTokenization ptr;
+  private final PowerTokenization ptr;
 
-  private final List<ValidToken> tokenList;
-  private final Optional<ValidToken> anchorT;
+  private final List<PowerToken> tokenList;
+  private final Optional<PowerToken> anchorT;
 
   /**
    *
    */
-  PowerTokenRefSequenceImpl(FlattenedTokenRefSequence vtrs, ValidTokenization ptr) throws InvalidConcreteStructException {
+  PowerTokenRefSequenceImpl(FlattenedTokenRefSequence vtrs, PowerTokenization ptr) throws InvalidConcreteStructException {
     if (!vtrs.getTokenizationUUID().equals(ptr.getUUID()))
       throw new InvalidConcreteStructException("Incorrect Tokenization: the pointer of the TRS is not the same as the Tokenization's UUID.");
     this.vtrs = vtrs;
     this.ptr = ptr;
 
-    Builder<ValidToken> b = new Builder<>();
-    Map<Integer, ValidToken> tm = ptr.getIndexToTokenMap();
+    Builder<PowerToken> b = new Builder<>();
+    Map<Integer, PowerToken> tm = ptr.getIndexToTokenMap();
     for (int i : vtrs.getTokenIndices()) {
       if (!tm.containsKey(i))
         throw new InvalidConcreteStructException("TokenRefSequence references token index: "
@@ -70,7 +70,7 @@ public class PowerTokenRefSequenceImpl implements PowerTokenRefSequence {
   }
 
   @Override
-  public ValidTokenization getTokenization() {
+  public PowerTokenization getTokenization() {
     return this.ptr;
   }
 

@@ -11,10 +11,6 @@ public class Communications {
 
   }
 
-  public static final ValidCommunication validate(Communication c) throws InvalidConcreteStructException {
-    return new NecessarilyUniqueUUIDCommunication(c);
-  }
-
   public static final PowerCommunication empower(Communication c) throws InvalidConcreteStructException {
     return new NecessarilyUniqueUUIDCommunication(c);
   }

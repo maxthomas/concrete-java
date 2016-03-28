@@ -14,7 +14,10 @@ import com.google.common.collect.ImmutableMap.Builder;
 import edu.jhu.hlt.concrete.TaggedToken;
 import edu.jhu.hlt.concrete.validation.ff.ConfidenceImpl;
 import edu.jhu.hlt.concrete.validation.ff.Confidences;
+import edu.jhu.hlt.concrete.validation.ff.FlattenedTextSpan;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
+import edu.jhu.hlt.concrete.validation.ff.PowerTextSpan;
+import edu.jhu.hlt.concrete.validation.ff.PowerToken;
 
 /**
  * An implementation of {@link ValidTaggedToken} with some strong assumptions
@@ -37,7 +40,7 @@ import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
  * lists. The second item of the returned map will be the second item in both
  * the <code>tagList</code> and <code>confidenceList</code>.
  */
-public class StrictValidTokenTagging implements ValidTaggedToken {
+public class StrictValidTokenTagging implements PowerTaggedToken {
 
   private final int idx;
   private final Optional<String> tag;
@@ -113,5 +116,23 @@ public class StrictValidTokenTagging implements ValidTaggedToken {
   @Override
   public Map<String, ConfidenceImpl> getTagToConfidenceMap() {
     return this.tagToConfMap;
+  }
+
+  @Override
+  public Optional<String> getTokenText() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public Optional<PowerTextSpan> getTextSpan() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public PowerToken getToken() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

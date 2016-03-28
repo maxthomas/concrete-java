@@ -20,12 +20,20 @@ public class TextSpans {
       return Optional.of(new FlatTextSpanImpl(ts));
   }
 
-  public static final Optional<PowerTextSpan> empower(TextSpannable ts, Communication c) throws InvalidConcreteStructException {
+  public static final Optional<PowerTextSpan> empower(TextSpannable ts, Communication c)
+      throws InvalidConcreteStructException {
     Optional<FlattenedTextSpan> ofts = ts.getTextSpan();
     if (ofts.isPresent())
       return Optional.of(new PowerTextSpanImpl(ofts.get(), c));
     else
       return Optional.empty();
+  }
+
+  public static final Optional<PowerTextSpan> empower(TextSpan ts, Communication c)
+      throws InvalidConcreteStructException {
+    Optional<FlattenedTextSpan> fts = flatten(ts);
+    return fts.isPresent() ?
+        Optional.of(empower(fts.get(), c)) : Optional.empty();
   }
 
   public static final PowerTextSpan empower(FlattenedTextSpan fts, Communication c) throws InvalidConcreteStructException {

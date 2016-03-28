@@ -8,10 +8,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList.Builder;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.SpanLink;
 import edu.jhu.hlt.concrete.Tokenization;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
-import edu.jhu.hlt.concrete.validation.ff.PowerTokenRefSequence;
 
 /**
  * Factory for creation of {@link ValidSpanLink} objects.
@@ -21,22 +21,20 @@ public class SpanLinks {
   private SpanLinks() {
   }
 
-  public static final List<ValidSpanLink> extract(Tokenization tkz) throws InvalidConcreteStructException {
-    Builder<ValidSpanLink> b = new Builder<>();
+  public static final List<PowerSpanLink> extract(Tokenization tkz, Communication c)
+      throws InvalidConcreteStructException {
+    Builder<PowerSpanLink> b = new Builder<>();
     if (tkz.isSetSpanLinkList())
       for (SpanLink sl : tkz.getSpanLinkList()) {
-        ValidSpanLink vsl = validate(sl);
+        PowerSpanLink vsl = empower(sl, c);
         b.add(vsl);
       }
 
     return b.build();
   }
 
-  public static final ValidSpanLink validate (SpanLink sl) throws InvalidConcreteStructException {
-    return new SpanLinkWithEitherConcreteOrExternalTarget(sl);
-  }
-
-  public static final PowerSpanLink empower(ValidSpanLink sl, PowerTokenRefSequence ptrs) throws InvalidConcreteStructException {
-    return new PowerSpanLinkImpl(sl, ptrs);
+  public static final PowerSpanLink empower(SpanLink sl, Communication c)
+      throws InvalidConcreteStructException {
+    return new SpanLinkWithEitherConcreteOrExternalTarget(sl, c);
   }
 }

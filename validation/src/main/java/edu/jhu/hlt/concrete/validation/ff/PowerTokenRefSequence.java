@@ -10,7 +10,8 @@ import java.util.Optional;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.TokenRefSequence;
 import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.miscommunication.tokenized.PowerTokenization;
+import edu.jhu.hlt.concrete.validation.ff.structure.PowerTokenization;
+
 
 /**
  * Interface, extending {@link FlattenedTokenRefSequence}, that represents

@@ -1,5 +1,6 @@
 package edu.jhu.hlt.concrete.validation.ff.entity;
 
+import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.EntityMention;
 import edu.jhu.hlt.concrete.validation.ff.InvalidConcreteStructException;
 
@@ -9,7 +10,8 @@ public class EntityMentions {
 
   }
 
-  public static final ValidEntityMention validate(final EntityMention em) throws InvalidConcreteStructException {
-    return new NecessarilyUniqueUUIDEntityMention(em);
+  public static final PowerEntityMention empower(final EntityMention em, Communication c)
+      throws InvalidConcreteStructException {
+    return new NecessarilyUniqueUUIDEntityMention(em, c);
   }
 }
